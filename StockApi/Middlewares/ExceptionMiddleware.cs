@@ -34,8 +34,8 @@ namespace StockApi.Middlewares
             {
                 StatusCode = context.Response.StatusCode,
                 Message = exception.Message,
-                Stacktrace = exception.StackTrace ?? "" // avoiding the null
-            }.ToString());
+                //Stacktrace = exception.UnknownException == null ? exception.StackTrace : exception.UnknownException.StackTrace
+            }.ToString()); ;
         }
     }
 }

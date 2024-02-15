@@ -3,6 +3,7 @@ using Stock.Application.AppUsecases.Stocks.CreateStocks;
 using Stock.Application.AppUsecases.Stocks.DeleteStock;
 using Stock.Application.AppUsecases.Stocks.GetStocks;
 using Stock.Application.AppUsecases.Stocks.UpdateStock;
+using Stock.Domain.DomainEntities;
 using Stock.Domain.Dtos;
 using Stock.Domain.Exceptions;
 
@@ -33,57 +34,117 @@ namespace StockApi.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var stockDomain = _getStocksUseCase.GetStockById(id);
-            if (stockDomain == null)
+            try
             {
-                 throw new NotFoundException("No Stock Found."); 
+                var stockDomain = _getStocksUseCase.GetStockById(id);
+                if (stockDomain == null)
+                {
+                    throw new NotFoundException("No Stock Found.", null);
+                }
+
+
+                return Ok(new StockResponseDto<StockDomain>() { Message = null, Data = stockDomain });
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
+                throw new NotFoundException(ex.Message, ex);
             }
 
-            
-            return Ok(stockDomain); 
+
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            
-            var allStocks = _getStocksUseCase.GetAllStocks();
-            return Ok(allStocks);
+            try
+            {
+                var allStocks = _getStocksUseCase.GetAllStocks();
+                return Ok(new StockResponseDtoList<StockDomain>() { Message = null, Data = allStocks });
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
+                throw new NotFoundException(ex.Message, ex);
+            }
+
+           
         }
 
         [HttpGet("symbol/{symbol}")]
         public IActionResult GetStockBySymbol(string symbol) 
         {
-            var stockBySymbol = _getStocksUseCase.GetStockBySymbol(symbol);
-            if (stockBySymbol == null)
+            try
             {
-                throw new NotFoundException("No Stock Found By this Symbol.");
+                var stockBySymbol = _getStocksUseCase.GetStockBySymbol(symbol);
+                if (stockBySymbol == null)
+                {
+                    throw new NotFoundException("No Stock Found By this Symbol.", null);
+                }
+                return Ok(new StockResponseDto<StockDomain>() { Message = null, Data = stockBySymbol });
+
             }
-            return Ok(stockBySymbol);
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
+                throw new NotFoundException(ex.Message, ex);
+            }
+            
         }
 
         [HttpPost]
-        public IActionResult CreateStock([FromBody] StockDto stock)
+        public async Task<IActionResult> CreateStock([FromBody] StockDto stock)
         {
-            _createStockUseCase.CreateStock(stock);
+            try 
+            {
+                await _createStockUseCase.CreateStock(stock);
 
-            return Ok();
+                return Ok(new StockResponseDto<StockDto>() { Message = "Resource created successfully", Data = stock });
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
+                throw new NotFoundException(ex.Message, ex);
+            }
+
 
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateStock([FromBody] StockDto stock, int id)
         {
-            _updateStockUseCase.UpdateStock(stock, id);
-
-            return Ok();
+            try 
+            {
+                _updateStockUseCase.UpdateStock(stock, id);
+                return Ok(new StockResponseDto<StockDto>() { Message = "Resource updated successfully", Data = stock });
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
+                throw new NotFoundException(ex.Message, ex);
+            }
+          
 
         }
         [HttpDelete("{id}")]
         public IActionResult DeleteStock(int id) 
         {
-            _deleteStockUseCase.DeleteStock(id);
-            return Ok();
+            try
+            {
+                _deleteStockUseCase.DeleteStock(id);
+                return Ok(new StockResponseDto<StockDto>() { Message = "Resource deleted successfully", Data = null });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
+                throw new NotFoundException(ex.Message, ex);
+            }
 
         }
     }

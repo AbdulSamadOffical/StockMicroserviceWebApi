@@ -17,11 +17,8 @@ namespace Stock.Infrastructure.Persistence
 
         public IStockProductRepository StockProductRepository { get; }
 
-       
-
         public int Complete()
         {
-            
             return _context.SaveChanges();
         }
 

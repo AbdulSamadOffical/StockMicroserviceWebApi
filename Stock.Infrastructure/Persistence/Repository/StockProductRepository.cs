@@ -52,7 +52,7 @@ namespace Stock.Infrastructure.Persistence.Repository
 
             if(stockProduct == null)
             {
-                throw new NotFoundException("Stock product doesn't exist's.");
+                throw new NotFoundException("Stock product doesn't exist's.", null);
             }
 
             stockProduct.Symbol = stock.Symbol;
@@ -66,7 +66,7 @@ namespace Stock.Infrastructure.Persistence.Repository
 
             if (stockProduct == null)
             {
-                throw new NotFoundException("Stock product doesn't exist's.");
+                throw new NotFoundException("Stock product doesn't exist's.", null);
             }
             _stockProduct.Remove(stockProduct);
         }

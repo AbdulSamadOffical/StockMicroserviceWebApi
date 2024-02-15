@@ -9,6 +9,11 @@ using Stock.Application.AppUsecases.Stocks.GetStocks;
 using Stock.Application.AppUsecases.Stocks.CreateStocks;
 using Stock.Application.AppUsecases.Stocks.UpdateStock;
 using Stock.Application.AppUsecases.Stocks.DeleteStock;
+using Microsoft.Extensions.Hosting;
+using Stock.Infrastructure.MessageBroker.rabbitmq;
+using Stock.Infrastructure.MessageBroker;
+using Microsoft.Extensions.Logging;
+using Stock.Domain.Interfaces.MessageBroker;
 
 
 public static class Startup
@@ -28,7 +33,13 @@ public static class Startup
         services.AddScoped<UpdateStockUseCase>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<DeleteStockUsecase>();
-       
+        services.AddSingleton<IBus>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<IBus>>();
+            return RabbitHutch.CreateBus("localhost", logger);
+        });
+        services.AddHostedService<Worker>();
+
     }
 
 }
