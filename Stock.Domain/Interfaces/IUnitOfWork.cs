@@ -6,5 +6,6 @@ namespace Stock.Domain.Interfaces
     {
         int Complete ();
         IStockProductRepository StockProductRepository { get; }
+        IUserRepository UserRepository { get; }
     }
 }

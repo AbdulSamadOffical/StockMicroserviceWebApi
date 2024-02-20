@@ -12,6 +12,7 @@ namespace Stock.Infrastructure.Persistence.Repository
         private readonly IMapper _mapper;
         protected readonly ApplicationContext _context;
         private readonly IGenericRepository<StockProduct> _stockProduct;
+
         public StockProductRepository(IMapper mapper, ApplicationContext context, IGenericRepository<StockProduct> stockProduct)
         {
             _context = context;

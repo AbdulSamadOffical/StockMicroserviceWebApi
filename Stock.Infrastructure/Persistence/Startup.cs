@@ -28,6 +28,7 @@ public static class Startup
         services.AddScoped(typeof(IGenericRepository<>), typeof(InMemoryGenericRepository<>));
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IStockProductRepository, StockProductRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<GetStocksUseCase>();
         services.AddScoped<CreateStockUsecase>();
         services.AddScoped<UpdateStockUseCase>();
@@ -38,7 +39,7 @@ public static class Startup
             var logger = sp.GetRequiredService<ILogger<IBus>>();
             return RabbitHutch.CreateBus("localhost", logger);
         });
-        services.AddHostedService<Worker>();
+        services.AddHostedService<UserWorker>();
 
     }
 

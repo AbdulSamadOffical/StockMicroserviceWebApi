@@ -14,6 +14,7 @@ namespace Stock.Infrastructure.AutoMapper
 
             CreateMap<StockProduct, StockDomain>();
             CreateMap<StockDto, StockProduct>();
+            CreateMap<UserDto, User>();
         }
 
     }
