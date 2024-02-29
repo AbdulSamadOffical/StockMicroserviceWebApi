@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace Stock.Domain.Dtos
 {
-    public class StockDto
+    public class StockRequestDto
     {
         public string Symbol { get; set; }
         public string CompanyName { get; set; }
         public decimal Price { get; set; }
-        public string UserId { get; set; }
-
-        public int Id { get; set; }
-
+        
     }
 
 }

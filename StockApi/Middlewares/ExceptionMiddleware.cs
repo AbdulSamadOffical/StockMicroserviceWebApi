@@ -19,23 +19,39 @@ namespace StockApi.Middlewares
             {
                 await _next(httpContext);
             }
-            catch (CustomException ex)
+            catch (Exception ex)
             {
                 
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
-        private async Task HandleExceptionAsync(HttpContext context, CustomException exception)
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = exception.StatusCode;
-            await context.Response.WriteAsync(new ErrorDetails()
+           
+
+            if (exception is BadRequestException)
+            {
+                context.Response.StatusCode = 401;
+            }
+            else if (exception is NotFoundException)
+            {
+                context.Response.StatusCode = 404;
+            }
+            else
+            {
+                context.Response.StatusCode = 500;
+            }
+
+
+
+            var errorResponse = new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
                 Message = exception.Message,
-                Stacktrace = exception.StackTrace ?? "" // avoiding the null
-            }.ToString());
+
+            };
+            await context.Response.WriteAsync(Newtonsoft.Json.JsonConvert.SerializeObject(errorResponse));
         }
     }
 }

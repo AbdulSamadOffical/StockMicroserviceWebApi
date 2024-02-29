@@ -14,7 +14,7 @@ namespace Stock.Application.AppUsecases.Stocks.GetStocks
         {
             _unitOfWork = unitOfWork;
         }
-        public StockDomain GetStockById(int id)
+        public StockDomain GetStockById(string id)
         {
             return _unitOfWork.StockProductRepository.GetStockById(id);
         }

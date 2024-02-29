@@ -21,7 +21,7 @@ namespace Stock.Infrastructure.Persistence.Repository
             throw new NotImplementedException();
         }
 
-        T IGenericRepository<T>.GetById(int id)
+        T IGenericRepository<T>.GetById(string id)
         {
             throw new NotImplementedException();
         }

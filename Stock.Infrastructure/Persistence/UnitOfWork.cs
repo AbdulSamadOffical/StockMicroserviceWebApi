@@ -9,19 +9,18 @@ namespace Stock.Infrastructure.Persistence
         private readonly ApplicationContext _context;
 
    
-        public UnitOfWork(ApplicationContext context, IStockProductRepository productRepository) 
+        public UnitOfWork(ApplicationContext context, IStockProductRepository productRepository, IUserRepository userRepository) 
         {
             _context = context;
             StockProductRepository = productRepository;
+            UserRepository = userRepository;
         }
 
         public IStockProductRepository StockProductRepository { get; }
-
-       
+        public IUserRepository UserRepository { get; }
 
         public int Complete()
         {
-            
             return _context.SaveChanges();
         }
 

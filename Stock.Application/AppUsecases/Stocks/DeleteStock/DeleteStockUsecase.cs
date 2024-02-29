@@ -11,7 +11,7 @@ namespace Stock.Application.AppUsecases.Stocks.DeleteStock
             _unitOfWork = unitOfWork;
         }
 
-        public void DeleteStock(int id) 
+        public void DeleteStock(string id) 
         {
             _unitOfWork.StockProductRepository.DeleteStockById(id);
             _unitOfWork.Complete();

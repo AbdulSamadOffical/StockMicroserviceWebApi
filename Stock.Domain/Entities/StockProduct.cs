@@ -9,7 +9,7 @@ namespace Stock.Domain.Entities
         public string CompanyName { set; get; } = string.Empty;
         public decimal Price { set; get; }
         [ForeignKey("User")]
-        public int UserId { set; get; }
+        public string UserId { set; get; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
