@@ -23,7 +23,7 @@ namespace Stock.Infrastructure.MessageBroker.rabbitmq
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _busControl.ReceiveAsync<UserDto>("user", x =>
+            await _busControl.ReceiveAsync<UserDto>("user-auth", "new-user", x =>
             {
                 Task.Run(() => { DidJob(x); }, stoppingToken);
             });
@@ -37,7 +37,7 @@ namespace Stock.Infrastructure.MessageBroker.rabbitmq
                 
                 scopedService.UserRepository.CreateUser(user);
                 scopedService.Complete();
-                _logger.LogInformation($"CompanyName: {user.UserName}, Stock Symbol: {user.Email}");
+                _logger.LogInformation($"UserName: {user.UserName}, Email: {user.Email}, Id: {user.Id}");
             }
            
 

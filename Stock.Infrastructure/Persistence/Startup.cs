@@ -14,6 +14,8 @@ using Stock.Infrastructure.MessageBroker.rabbitmq;
 using Stock.Infrastructure.MessageBroker;
 using Microsoft.Extensions.Logging;
 using Stock.Domain.Interfaces.MessageBroker;
+using Trade.Domain.Interfaces;
+using Trade.Infrastructure.Context;
 
 
 public static class Startup
@@ -40,6 +42,8 @@ public static class Startup
             return RabbitHutch.CreateBus("localhost", logger);
         });
         services.AddHostedService<UserWorker>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentContext, CurrentUser>();
 
     }
 

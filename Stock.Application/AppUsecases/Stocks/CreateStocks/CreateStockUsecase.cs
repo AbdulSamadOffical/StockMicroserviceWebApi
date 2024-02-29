@@ -1,7 +1,10 @@
 ﻿using Stock.Domain.Dtos;
+using Stock.Domain.Entities;
 using Stock.Domain.Interfaces;
 using Stock.Domain.Interfaces.MessageBroker;
-
+using AutoMapper;
+using Stock.Domain.RepositoryContracts;
+using Trade.Domain.Interfaces;
 
 namespace Stock.Application.AppUsecases.Stocks.CreateStocks
 {
@@ -9,17 +12,29 @@ namespace Stock.Application.AppUsecases.Stocks.CreateStocks
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBus _busControl;
-        public CreateStockUsecase(IUnitOfWork unitOfWork, IBus busControl) 
+        private readonly IMapper _mapper;
+        private readonly ICurrentContext _currentContext;
+        private readonly IUserRepository _userRepository;
+        public CreateStockUsecase(IUnitOfWork unitOfWork, IBus busControl, IMapper mapper,
+            ICurrentContext currentContext, IUserRepository userRepository) 
         {
             _unitOfWork = unitOfWork;
             _busControl = busControl;
+            _mapper = mapper;
+            _currentContext = currentContext;
+            _userRepository = userRepository;
         }
 
-        public async Task CreateStock(StockDto stock)
+        public async Task CreateStock(StockRequestDto stock)
         {
-            _unitOfWork.StockProductRepository.CreateStock(stock);
+            var stockProduct = _mapper.Map<StockProduct>(stock);
+            var userId = _currentContext.LoggedInUser;            
+            var user = _userRepository.GetUserById(userId);
+            stockProduct.UserId = user.Id;
+            _unitOfWork.StockProductRepository.CreateStock(stockProduct);
             _unitOfWork.Complete();
-            await _busControl.SendAsync<StockDto>("stock-topic", stock); // Will remove the magic strings
+            var stockMessage = _mapper.Map<StockProduct, StockDto>(stockProduct);
+            await _busControl.SendAsync<StockDto>("stock-trade", stockMessage); 
         }
     }
 }

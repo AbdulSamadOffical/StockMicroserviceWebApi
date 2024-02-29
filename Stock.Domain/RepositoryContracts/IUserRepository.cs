@@ -7,5 +7,6 @@ namespace Stock.Domain.RepositoryContracts
     public interface IUserRepository
     {
         public void CreateUser(UserDto userdto);
+        public UserDto GetUserById(string userId);
     }
 }

@@ -1,29 +1,16 @@
 ﻿namespace Stock.Domain.Exceptions
 {
-    
-
-    public class CustomException : Exception
+   
+    public class NotFoundException : Exception
     {
-        public int StatusCode { get; }
-        public Exception UnknownException { get; }
-
-        public CustomException(string message, int statusCode, Exception unknownException) : base(message)
-        {
-            StatusCode = statusCode;
-            UnknownException = unknownException;
-        }
-    }
-
-    public class NotFoundException : CustomException
-    {
-        public NotFoundException(string message, Exception ex) : base(message, 404, ex)
+        public NotFoundException(string message) : base(message)
         {
         }
     }
 
-    public class BadRequestException : CustomException
+    public class BadRequestException : Exception
     {
-        public BadRequestException(string message, Exception ex) : base(message, 400, ex)
+        public BadRequestException(string message) : base(message)
         {
         }
     }

@@ -18,10 +18,12 @@ namespace Stock.Infrastructure.MessageBroker.rabbitmq
             _channel = channel;
             _logger = logger;
         }
-        public async Task SendAsync<T>(string queue, T message)
+        public async Task SendAsync<T>(string exchange, T message)
         {
             try
             {
+                // Declaring a queue and storing the message in that queue until it's consumed.
+                /*
                 await Task.Run(() =>
                 {
                     _channel.QueueDeclare(queue, true, false, false);
@@ -31,7 +33,18 @@ namespace Stock.Infrastructure.MessageBroker.rabbitmq
                     _channel.BasicPublish(string.Empty, queue, null,
                     Encoding.UTF8.GetBytes(output));
                 });
-                throw new Exception();
+               */
+
+                // Fanout is used to broad cast message to multiple consumers.
+                await Task.Run(() =>
+                {
+                    _channel.ExchangeDeclare(exchange, ExchangeType.Fanout, true);
+                    var properties = _channel.CreateBasicProperties();
+                    properties.Persistent = false;
+                    var output = JsonConvert.SerializeObject(message);
+                    _channel.BasicPublish(exchange, string.Empty, null,
+                        Encoding.UTF8.GetBytes(output));
+                });
             }
             catch (Exception ex)
             {            
@@ -40,11 +53,13 @@ namespace Stock.Infrastructure.MessageBroker.rabbitmq
             }
             
         }
-        public async Task ReceiveAsync<T>(string queue, Action<T> onMessage)
+        public async Task ReceiveAsync<T>(string exchange, string queue, Action<T> onMessage)
         {
             try
             {
+                _channel.ExchangeDeclare(exchange, ExchangeType.Fanout, true);
                 _channel.QueueDeclare(queue, true, false, false);
+                _channel.QueueBind(queue, exchange, "");
                 var consumer = new AsyncEventingBasicConsumer(_channel);
 
                 consumer.Received += async (s, e) =>

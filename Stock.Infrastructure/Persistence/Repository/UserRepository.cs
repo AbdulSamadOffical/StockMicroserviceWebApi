@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Stock.Domain.Dtos;
 using Stock.Domain.Entities;
+using Stock.Domain.Exceptions;
 using Stock.Domain.RepositoryContracts;
 
 namespace Stock.Infrastructure.Persistence.Repository
@@ -21,6 +22,18 @@ namespace Stock.Infrastructure.Persistence.Repository
         {
             var user = _mapper.Map<User>(userdto);
             _baserepository.Add(user);
+        }
+
+        public UserDto GetUserById(string userId)
+        {
+            var user = _baserepository.GetById(userId);
+            if (user == null)
+            {
+                throw new NotFoundException("user no longer exists.");
+            }
+            var userDto = _mapper.Map<User, UserDto>(user);
+            return userDto;
+
         }
     }
 }

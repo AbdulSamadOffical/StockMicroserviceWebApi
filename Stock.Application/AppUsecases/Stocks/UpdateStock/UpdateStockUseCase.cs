@@ -12,7 +12,7 @@ namespace Stock.Application.AppUsecases.Stocks.UpdateStock
             _unitOfWork = unitOfWork;
         }
 
-        public void UpdateStock (StockDto stock, int id)
+        public void UpdateStock (StockRequestDto stock, string id)
         {
             _unitOfWork.StockProductRepository.PutStock (stock, id);
             _unitOfWork.Complete();

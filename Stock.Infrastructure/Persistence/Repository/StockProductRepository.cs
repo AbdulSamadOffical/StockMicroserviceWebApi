@@ -4,6 +4,7 @@ using AutoMapper;
 using Stock.Domain.DomainEntities;
 using Stock.Domain.Dtos;
 using Stock.Domain.Exceptions;
+using Trade.Domain.Interfaces;
 
 namespace Stock.Infrastructure.Persistence.Repository
 {
@@ -12,15 +13,21 @@ namespace Stock.Infrastructure.Persistence.Repository
         private readonly IMapper _mapper;
         protected readonly ApplicationContext _context;
         private readonly IGenericRepository<StockProduct> _stockProduct;
+        private readonly ICurrentContext _currentContext;
+        private readonly IUserRepository _userRepository;
 
-        public StockProductRepository(IMapper mapper, ApplicationContext context, IGenericRepository<StockProduct> stockProduct)
+        public StockProductRepository(IMapper mapper, ApplicationContext context, IGenericRepository<StockProduct> stockProduct,
+            ICurrentContext currentContext, IUserRepository userRepository)
         {
             _context = context;
             _stockProduct = stockProduct;
             _mapper = mapper;
+            _currentContext = currentContext;
+            _userRepository = userRepository;
+            _userRepository = userRepository;
         }
 
-        public StockDomain GetStockById(int id)
+        public StockDomain GetStockById(string id)
         {
             var stockProduct = _stockProduct.GetById(id);
             var stock = _mapper.Map<StockDomain>(stockProduct);
@@ -41,19 +48,18 @@ namespace Stock.Infrastructure.Persistence.Repository
             return stock;
         }
 
-        public void CreateStock(StockDto stock)
+        public void CreateStock(StockProduct stock)
         {
-            var stockProduct = _mapper.Map<StockProduct>(stock);
-            _stockProduct.Add(stockProduct);
+            _stockProduct.Add(stock);
         }
 
-        public void PutStock(StockDto stock, int id) 
+        public void PutStock(StockRequestDto stock, string id) 
         {
             var stockProduct = _stockProduct.GetById(id);
 
             if(stockProduct == null)
             {
-                throw new NotFoundException("Stock product doesn't exist's.", null);
+                throw new NotFoundException("Stock product doesn't exist's.");
             }
 
             stockProduct.Symbol = stock.Symbol;
@@ -61,13 +67,13 @@ namespace Stock.Infrastructure.Persistence.Repository
             stockProduct.CompanyName = stock.CompanyName;
         }
 
-        public void DeleteStockById(int id) 
+        public void DeleteStockById(string id) 
         {
             var stockProduct = _stockProduct.GetById(id);
 
             if (stockProduct == null)
             {
-                throw new NotFoundException("Stock product doesn't exist's.", null);
+                throw new NotFoundException("Stock product doesn't exist's.");
             }
             _stockProduct.Remove(stockProduct);
         }
